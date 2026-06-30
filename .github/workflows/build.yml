@@ -25,6 +25,10 @@ jobs:
           zlib1g-dev libncurses-dev libffi-dev libssl-dev \
           automake
 
+      - name: Install Android SDK tools (fix AIDL/build-tools)
+        run: |
+          sudo apt install -y android-sdk adb
+
       - name: Install Buildozer
         run: |
           pip install --upgrade pip
