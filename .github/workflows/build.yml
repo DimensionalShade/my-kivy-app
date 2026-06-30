@@ -25,17 +25,24 @@ jobs:
           zlib1g-dev libncurses-dev libffi-dev libssl-dev \
           automake
 
-      - name: Install Android SDK tools (fix AIDL/build-tools)
+      - name: Install Android SDK + build-tools (FIX AIDL)
         run: |
-          sudo apt install -y android-sdk adb
+          sudo apt update
+          sudo apt install -y android-sdk adb sdkmanager || true
+
+          # вручную докачиваем build-tools и platform-tools
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2" || true
 
       - name: Install Buildozer
         run: |
           pip install --upgrade pip
           pip install buildozer cython==0.29.36 wheel setuptools==68.0.0
 
-      - name: Build Android project
-        run: buildozer android update
+      - name: Fix environment paths
+        run: |
+          export ANDROID_HOME=/usr/lib/android-sdk
+          export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
       - name: Build APK
         run: buildozer android debug
